@@ -51,14 +51,15 @@ Mouse.Button1Up:Connect(function()
 
 			game:GetService("Players").LocalPlayer.PlayerGui.MainGui.Events.Delete:FireServer(unpack(args))
 		end
-		end
+		wait(.5)
+	end
 
 end)
 
 Mouse.Move:Connect(function()
 	local deleteui = game.Players.LocalPlayer.PlayerGui.MainGui.Tools.Delete.DeleteUI
 	--print(deleteui.Position)
-	if selecting and deleteui.Position == UDim2.new(0,0,1,-50)  then
+	if selecting and deleteui.Position == UDim2.new(0.5,0,1,-50)  then
 		--print("Moving and Selecting")
 		
 		SelectFrame.Visible = true
