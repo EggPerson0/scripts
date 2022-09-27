@@ -23,7 +23,7 @@ Selecionbox.SurfaceTransparency = 0.75
 
 
 local camera = workspace.CurrentCamera
---print("Executed")
+print("Executed")
 local player = game.Players.LocalPlayer
 local Parts = {}
 local Mouse = player:GetMouse()
@@ -32,7 +32,7 @@ local InitPos = Vector2.new()
 local Plot = workspace.Creations[player.Name]
 
 Mouse.Button1Down:Connect(function()
-	--print("Selecting")
+	print("Selecting")
 	selecting = true
 	
 	InitPos = Vector2.new(Mouse.X,Mouse.Y)
@@ -41,8 +41,8 @@ end)
 Mouse.Button1Up:Connect(function()
 	selecting = false
 	SelectFrame.Visible = false
-	--print("DoneSelecting")
-	repeat
+	print("DoneSelecting")
+	
 	for i,v in pairs(Parts) do
 		if v~= nil and v.Parent ~= nil then
 			local args = {
@@ -52,12 +52,12 @@ Mouse.Button1Up:Connect(function()
 			game:GetService("Players").LocalPlayer.PlayerGui.MainGui.Events.Delete:FireServer(unpack(args))
 		end
 		end
-		wait(.5)
-	until #Parts == 0
+
 end)
 
 Mouse.Move:Connect(function()
 	local deleteui = game.Players.LocalPlayer.PlayerGui.MainGui.Tools.Delete.DeleteUI
+	--print(deleteui.Position)
 	if selecting and deleteui.Position == UDim2.new(0,0,1,-50)  then
 		--print("Moving and Selecting")
 		
@@ -87,7 +87,7 @@ Mouse.Move:Connect(function()
 			end
 		end
 	else
-		--print("NotDeleteing")
+		print("NotDeleteing")
 		Parts = {}
 		SelectFrame.Visible = false
 	end
