@@ -1,12 +1,7 @@
--- Gui to Lua
--- Version: 3.2
-
--- Instances:
-
 
 local SelectFrame = Instance.new("Frame")
 local Selecionbox = Instance.new("SelectionBox")
---Properties:
+
 
 SelectFrame.Name = "SelectFrame"
 SelectFrame.Parent = game.Players.LocalPlayer.PlayerGui.MainGui
@@ -20,31 +15,28 @@ Selecionbox.Parent = SelectFrame
 Selecionbox.Color3 = Color3.new(1,0,0)
 Selecionbox.LineThickness = 0.025
 Selecionbox.SurfaceTransparency = 0.75
--- Scripts:
 
-	--[[local args = {
-		[1] = workspace.Creations.Egg_Person0.Block
-	}
-	
-	game:GetService("Players").LocalPlayer.PlayerGui.MainGui.Events.Delete:FireServer(unpack(args))]]
+
 local camera = workspace.CurrentCamera
-
+print("Executed")
 local player = game.Players.LocalPlayer
 local Parts = {}
 local Mouse = player:GetMouse()
 local selecting = false
 local InitPos = Vector2.new()
-local Plot = workspace.Creation[player.Name]
+local Plot = workspace.Creations[player.Name]
 
 Mouse.Button1Down:Connect(function()
+	print("Selecting")
 	selecting = true
-	InitPos = Vector2.new(Mouse.X,Mouse.Y)
+	local position =  camera:WorldToViewportPoint(Mouse.Hit.Position)
+	InitPos = Vector2.new(position.X,position.Y)
 end)
 
 Mouse.Button1Up:Connect(function()
 	selecting = false
 	SelectFrame.Visible = false
-
+	print("DoneSelecting")
 	for i,v in pairs(Parts) do
 		if v~= nil and v.Parent ~= nil then
 			local args = {
@@ -58,9 +50,11 @@ end)
 
 Mouse.Move:Connect(function()
 	if selecting then
+		print("Moving and Selecting")
+		local position =  camera:WorldToViewportPoint(Mouse.Hit.Position)
 		SelectFrame.Visible = true
 		SelectFrame.Position = UDim2.new(0,InitPos.X,0,InitPos.Y)
-		SelectFrame.Size = UDim2.new(0,Mouse.X-InitPos.X,0,Mouse.Y-InitPos.Y)
+		SelectFrame.Size = UDim2.new(0,position.X-InitPos.X,0,position.Y-InitPos.Y)
 		for i,v in pairs(Parts) do
 			if v:FindFirstChild("SelectionBox") then
 				v:FindFirstChild("SelectionBox"):Destroy()
@@ -68,15 +62,15 @@ Mouse.Move:Connect(function()
 		end
 		Parts = {}
 		for i,v in pairs(Plot:GetChildren()) do
-			local worldPoint = v.Position
+			local worldPoint = v.Part.Position
 			local vector, inViewport = camera:WorldToViewportPoint(worldPoint)
 			if inViewport then
 				if vector.X > SelectFrame.Position.X.Offset and vector.X < SelectFrame.Position.X.Offset+SelectFrame.Size.X.Offset then
 					if vector.Y > SelectFrame.Position.Y.Offset and vector.Y < SelectFrame.Position.Y.Offset+SelectFrame.Size.Y.Offset then
-						table.insert(Parts,v.Parent)
+						table.insert(Parts,v.Part)
 						local selectionbox = Selecionbox:Clone()
-						selectionbox.Parent = v
-						selectionbox.Adornee = v
+						selectionbox.Parent = v.Part
+						selectionbox.Adornee = v.Part
 					end
 				end
 			end
