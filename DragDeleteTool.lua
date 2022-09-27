@@ -51,7 +51,7 @@ Mouse.Button1Up:Connect(function()
 
 			game:GetService("Players").LocalPlayer.PlayerGui.MainGui.Events.Delete:FireServer(unpack(args))
 		end
-		wait(.5)
+		wait(.1)
 	end
 
 end)
