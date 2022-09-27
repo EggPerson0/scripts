@@ -1,7 +1,12 @@
+-- Gui to Lua
+-- Version: 3.2
 
+-- Instances:
+
+wait(1)
 local SelectFrame = Instance.new("Frame")
 local Selecionbox = Instance.new("SelectionBox")
-
+--Properties:
 
 SelectFrame.Name = "SelectFrame"
 SelectFrame.Parent = game.Players.LocalPlayer.PlayerGui.MainGui
@@ -29,14 +34,15 @@ local Plot = workspace.Creations[player.Name]
 Mouse.Button1Down:Connect(function()
 	print("Selecting")
 	selecting = true
-	local position =  camera:WorldToViewportPoint(Mouse.Hit.Position)
-	InitPos = Vector2.new(position.X,position.Y)
+	
+	InitPos = Vector2.new(Mouse.X,Mouse.Y)
 end)
 
 Mouse.Button1Up:Connect(function()
 	selecting = false
 	SelectFrame.Visible = false
 	print("DoneSelecting")
+	repeat
 	for i,v in pairs(Parts) do
 		if v~= nil and v.Parent ~= nil then
 			local args = {
@@ -45,36 +51,43 @@ Mouse.Button1Up:Connect(function()
 
 			game:GetService("Players").LocalPlayer.PlayerGui.MainGui.Events.Delete:FireServer(unpack(args))
 		end
-	end
+		end
+		wait(.5)
+	until #Parts == 0
 end)
 
 Mouse.Move:Connect(function()
-	if selecting then
+	local deleteui = game.Players.LocalPlayer.PlayerGui.MainGui.Tools.Dlete.DeleteUI
+	if selecting and deleteui.Position == UDim2.new(0,0,1,-50)  then
 		print("Moving and Selecting")
-		local position =  camera:WorldToViewportPoint(Mouse.Hit.Position)
+		
 		SelectFrame.Visible = true
 		SelectFrame.Position = UDim2.new(0,InitPos.X,0,InitPos.Y)
-		SelectFrame.Size = UDim2.new(0,position.X-InitPos.X,0,position.Y-InitPos.Y)
+		SelectFrame.Size = UDim2.new(0,Mouse.X-InitPos.X,0,Mouse.Y-InitPos.Y)
 		for i,v in pairs(Parts) do
 			if v:FindFirstChild("SelectionBox") then
 				v:FindFirstChild("SelectionBox"):Destroy()
 			end
 		end
 		Parts = {}
-		for i,v in pairs(Plot:GetChildren()) do
-			local worldPoint = v.Part.Position
-			local vector, inViewport = camera:WorldToViewportPoint(worldPoint)
-			if inViewport then
-				if vector.X > SelectFrame.Position.X.Offset and vector.X < SelectFrame.Position.X.Offset+SelectFrame.Size.X.Offset then
-					if vector.Y > SelectFrame.Position.Y.Offset and vector.Y < SelectFrame.Position.Y.Offset+SelectFrame.Size.Y.Offset then
-						table.insert(Parts,v.Part)
-						local selectionbox = Selecionbox:Clone()
-						selectionbox.Parent = v.Part
-						selectionbox.Adornee = v.Part
+		for i,v in pairs(Plot:GetDescendants()) do
+			if v:IsA("Part") or v:IsA("Union") or v:IsA("MeshPart") then
+				local worldPoint = v.Position
+				local vector, inViewport = camera:WorldToScreenPoint(worldPoint)
+				if inViewport then
+					if vector.X > SelectFrame.Position.X.Offset and vector.X < SelectFrame.Position.X.Offset+SelectFrame.Size.X.Offset then
+						if vector.Y > SelectFrame.Position.Y.Offset and vector.Y < SelectFrame.Position.Y.Offset+SelectFrame.Size.Y.Offset then
+							table.insert(Parts,v)
+							local selectionbox = Selecionbox:Clone()
+							selectionbox.Parent = v
+							selectionbox.Adornee = v
+						end
 					end
 				end
 			end
 		end
+	else
+		SelectFrame.Visible = false
 	end
 end)
 
