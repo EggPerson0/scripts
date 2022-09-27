@@ -57,7 +57,7 @@ Mouse.Button1Up:Connect(function()
 end)
 
 Mouse.Move:Connect(function()
-	local deleteui = game.Players.LocalPlayer.PlayerGui.MainGui.Tools.Dlete.DeleteUI
+	local deleteui = game.Players.LocalPlayer.PlayerGui.MainGui.Tools.Delete.DeleteUI
 	if selecting and deleteui.Position == UDim2.new(0,0,1,-50)  then
 		--print("Moving and Selecting")
 		
